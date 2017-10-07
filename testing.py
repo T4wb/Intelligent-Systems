@@ -1,27 +1,31 @@
 ################################# Remco Cloudt (1551868) & Tawwab Djalielie (1548166) ##################################
-from enum import Enum
+
 import copy
+from enum import Enum
 
 '''
 Legenda:
-	doos = 2
-	lege positie = 0
-	doellocatie = 1
-	muur = 4
-	Medewerker = 5
-	gevulde doellocatie = 3
+	+ Lege positie        = 0
+	+ Doellocatie         = 1
+	+ Doos                = 2
+	+ Gevulde doellocatie = 3
+	+ Muur                = 4
+	+ Medewerker          = 5
 	
-	Aanname:
-	speelveld is altijd een matrix
+Aannames:
+	+ Speelveld is altijd een matrix.
 '''
 
-class ElementWaarde(Enum):
-    DOOS = 2,
-    MUUR = 4,
+
+class Element(Enum):
+    DOOS = 2
+    MUUR = 4
     MEDEWERKER = 5
+
 
 class Speelveld:
     def __init__(self):
+        self.padkosten = 0
         self.speelveld = \
             [
                 [4, 4, 4, 4, 4],
@@ -31,15 +35,14 @@ class Speelveld:
                 [4, 4, 4, 4, 4]
             ]
         self.positionMedewerker = [1, 1]
-        self.padkosten = 0
 
 
 class Kindknoop:
     def __init__(self, ouder, actie, coordinatenPositie2, coordinatenPositie3, waardePositie2, waardePositie3):
         self.ouder = ouder
         self.actie = actie
-        self.speelveld = copy.deepcopy(ouder.speelveld)
         self.padkosten = ouder.padkosten + 1
+        self.speelveld = copy.deepcopy(ouder.speelveld)
 
         # nieuwe positie medewerker
         self.positionMedewerker = \
@@ -52,7 +55,7 @@ class Kindknoop:
         # positie1 = de start positie van de medewerker aan het begin van een kindknoop
 
         # tel waarde positie2 op bij positie3 enkel als positie2 een doos is
-        if waardePositie2 == ElementWaarde.DOOS:
+        if waardePositie2 == Element.DOOS.value:
             self.speelveld[coordinatenPositie3[0]][coordinatenPositie3[1]] += waardePositie2
 
         # trek waarde positie2 af van positie2
@@ -60,10 +63,10 @@ class Kindknoop:
 
         # medewerker verplaatsen naar positie 2
         # waarde medewerker optellen bij positie2
-        self.speelveld[self.positionMedewerker[0]][self.positionMedewerker[1]] += ElementWaarde.MEDEWERKER
+        self.speelveld[self.positionMedewerker[0]][self.positionMedewerker[1]] += Element.MEDEWERKER.value
 
-        # waarde positie1 terugzetten naar oude status (0 of 1)
-        self.speelveld[ouder.positionMedewerker[0]][ouder.positionMedewerker[1]] -= ElementWaarde.MEDEWERKER
+        # waarde positie1 terugzetten naar oude status (waarde: 0 of 1)
+        self.speelveld[ouder.positionMedewerker[0]][ouder.positionMedewerker[1]] -= Element.MEDEWERKER.value
 
 
 def GenereerKinderen(ouder):
@@ -71,7 +74,7 @@ def GenereerKinderen(ouder):
     acties = \
         [
             [0, 1],  # Rechts
-            [0, -1], # Links
+            [0, -1],  # Links
             [1, 0],  # Boven
             [-1, 0]  # Onder
         ]
@@ -92,28 +95,25 @@ def GenereerKinderen(ouder):
                 coordinatenPositie2[1] + actie[1]
             ]
 
-        # checks of geldige coordinaten positie 3
+        ## checks of geldige coordinaten positie 3
         geldigeActie = False
 
+        # deze check wordt alleen uitgevoerd als de coordinaten van positie3 binnen het matrix ligt
         if coordinatenPositie3[0] < len(ouder.speelveld) and coordinatenPositie3[1] < len(ouder.speelveld[0]):
-            # verkrijg waarde bij positie2
-            waardePositie2 = ouder.speelveld[coordinatenPositie2[0]][coordinatenPositie2[1]]
-
-            # verkrijg waarde bij positie3
-            waardePositie3 = ouder.speelveld[coordinatenPositie3[0]][coordinatenPositie3[1]]
-
-            ## checks
             geldigeActie = True
 
-            # testen of een speler naast een doos staat en er een muur achter de doos staat
-            if waardePositie2 == ElementWaarde.DOOS and waardePositie3 == ElementWaarde.MUUR:
+            waardePositie2 = ouder.speelveld[coordinatenPositie2[0]][coordinatenPositie2[1]]
+            waardePositie3 = ouder.speelveld[coordinatenPositie3[0]][coordinatenPositie3[1]]
+
+            # check of een medewerker naast een doos staat en er een muur achter de doos staat
+            if waardePositie2 == Element.DOOS.value and waardePositie3 == Element.MUUR.value:
                 geldigeActie = False
 
-            # testen of er een muur naast de medewerker staat
-            elif waardePositie2 == ElementWaarde.MUUR:
+            # check of er een muur naast de medewerker staat
+            elif waardePositie2 == Element.MUUR.value:
                 geldigeActie = False
 
-        # genereer kinderen
+        ## genereer kinderen
         if geldigeActie:
             kind = Kindknoop(ouder, actie, coordinatenPositie2, coordinatenPositie3, waardePositie2, waardePositie3)
             kinderen.append(kind)
@@ -124,7 +124,7 @@ def GenereerKinderen(ouder):
 def Controleerspeelveld(knoop):
     for y in range(0, len(knoop.speelveld)):
         for x in range(0, len(knoop.speelveld[0])):
-            if knoop.speelveld[y][x] == ElementWaarde.DOOS: ##### to do: controleren op medewerker+doellocatie
+            if knoop.speelveld[y][x] == Element.DOOS.value:  ##### to do: controleren op medewerker+doellocatie
                 return False
 
     return True
