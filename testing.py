@@ -1,5 +1,5 @@
 ################################# Remco Cloudt (1551868) & Tawwab Djalielie (1548166) ##################################
-
+from enum import Enum
 import copy
 
 '''
@@ -15,6 +15,10 @@ Legenda:
 	speelveld is altijd een matrix
 '''
 
+class ElementWaarde(Enum):
+    DOOS = 2,
+    MUUR = 4,
+    MEDEWERKER = 5
 
 class Speelveld:
     def __init__(self):
@@ -48,7 +52,7 @@ class Kindknoop:
         # positie1 = de start positie van de medewerker aan het begin van een kindknoop
 
         # tel waarde positie2 op bij positie3 enkel als positie2 een doos is
-        if waardePositie2 == 2:
+        if waardePositie2 == ElementWaarde.DOOS:
             self.speelveld[coordinatenPositie3[0]][coordinatenPositie3[1]] += waardePositie2
 
         # trek waarde positie2 af van positie2
@@ -56,10 +60,10 @@ class Kindknoop:
 
         # medewerker verplaatsen naar positie 2
         # waarde medewerker optellen bij positie2
-        self.speelveld[self.positionMedewerker[0]][self.positionMedewerker[1]] += 5
+        self.speelveld[self.positionMedewerker[0]][self.positionMedewerker[1]] += ElementWaarde.MEDEWERKER
 
         # waarde positie1 terugzetten naar oude status (0 of 1)
-        self.speelveld[ouder.positionMedewerker[0]][ouder.positionMedewerker[1]] -= 5
+        self.speelveld[ouder.positionMedewerker[0]][ouder.positionMedewerker[1]] -= ElementWaarde.MEDEWERKER
 
 
 def GenereerKinderen(ouder):
@@ -102,11 +106,11 @@ def GenereerKinderen(ouder):
             geldigeActie = True
 
             # testen of een speler naast een doos staat en er een muur achter de doos staat
-            if waardePositie2 == 2 and waardePositie3 == 4:
+            if waardePositie2 == ElementWaarde.DOOS and waardePositie3 == ElementWaarde.MUUR:
                 geldigeActie = False
 
             # testen of er een muur naast de medewerker staat
-            elif waardePositie2 == 4:
+            elif waardePositie2 == ElementWaarde.MUUR:
                 geldigeActie = False
 
         # genereer kinderen
@@ -120,7 +124,7 @@ def GenereerKinderen(ouder):
 def Controleerspeelveld(knoop):
     for y in range(0, len(knoop.speelveld)):
         for x in range(0, len(knoop.speelveld[0])):
-            if knoop.speelveld[y][x] == 2:
+            if knoop.speelveld[y][x] == ElementWaarde.DOOS: ##### to do: controleren op medewerker+doellocatie
                 return False
 
     return True
