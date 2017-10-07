@@ -124,7 +124,7 @@ def GenereerKinderen(ouder):
 def Controleerspeelveld(knoop):
     for y in range(0, len(knoop.speelveld)):
         for x in range(0, len(knoop.speelveld[0])):
-            if knoop.speelveld[y][x] == Element.DOOS.value:  ##### to do: controleren op medewerker+doellocatie
+            if knoop.speelveld[y][x] == Element.DOOS.value:
                 return False
 
     return True
