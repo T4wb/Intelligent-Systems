@@ -26,7 +26,7 @@ class Speelveld:
                 [4, 0, 0, 0, 4],
                 [4, 4, 4, 4, 4]
             ]
-        self.positionMedewerker = [1, 1]  # fout zat hem hier: positionMedewerker is niet [2,2] maar [1,1]
+        self.positionMedewerker = [1, 1]
         self.padkosten = 0
 
 
