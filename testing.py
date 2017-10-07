@@ -31,7 +31,7 @@ class Speelveld:
 
 
 class Kindknoop:
-    def __init__(self, ouder, actie, coordinatenPositie2, coordinatenPositie3, positie2, positie3):
+    def __init__(self, ouder, actie, coordinatenPositie2, coordinatenPositie3, waardePositie2, waardePositie3):
         self.ouder = ouder
         self.actie = actie
         self.speelveld = copy.deepcopy(ouder.speelveld)
@@ -48,11 +48,11 @@ class Kindknoop:
         # positie1 = de start positie van de medewerker aan het begin van een kindknoop
 
         # tel waarde positie2 op bij positie3 enkel als positie2 een doos is
-        if positie2 == 2:
-            self.speelveld[coordinatenPositie3[0]][coordinatenPositie3[1]] += positie2
+        if waardePositie2 == 2:
+            self.speelveld[coordinatenPositie3[0]][coordinatenPositie3[1]] += waardePositie2
 
         # trek waarde positie2 af van positie2
-        self.speelveld[self.positionMedewerker[0]][self.positionMedewerker[1]] -= positie2
+        self.speelveld[self.positionMedewerker[0]][self.positionMedewerker[1]] -= waardePositie2
 
         # medewerker verplaatsen naar positie 2
         # waarde medewerker optellen bij positie2
@@ -93,25 +93,25 @@ def GenereerKinderen(ouder):
 
         if coordinatenPositie3[0] < len(ouder.speelveld) and coordinatenPositie3[1] < len(ouder.speelveld[0]):
             # verkrijg waarde bij positie2
-            positie2 = ouder.speelveld[coordinatenPositie2[0]][coordinatenPositie2[1]]
+            waardePositie2 = ouder.speelveld[coordinatenPositie2[0]][coordinatenPositie2[1]]
 
             # verkrijg waarde bij positie3
-            positie3 = ouder.speelveld[coordinatenPositie3[0]][coordinatenPositie3[1]]
+            waardePositie3 = ouder.speelveld[coordinatenPositie3[0]][coordinatenPositie3[1]]
 
             ## checks
             geldigeActie = True
 
             # testen of een speler naast een doos staat en er een muur achter de doos staat
-            if positie2 == 2 and positie3 == 4:
+            if waardePositie2 == 2 and waardePositie3 == 4:
                 geldigeActie = False
 
             # testen of er een muur naast de medewerker staat
-            elif positie2 == 4:
+            elif waardePositie2 == 4:
                 geldigeActie = False
 
         # genereer kinderen
         if geldigeActie:
-            kind = Kindknoop(ouder, actie, coordinatenPositie2, coordinatenPositie3, positie2, positie3)
+            kind = Kindknoop(ouder, actie, coordinatenPositie2, coordinatenPositie3, waardePositie2, waardePositie3)
             kinderen.append(kind)
 
     return kinderen
