@@ -40,11 +40,15 @@ class Speelveld:
         self.padkosten = 0
         self.speelveld = \
             [
-                [4, 4, 4, 4, 4, 4],
-                [4, 5, 0, 1, 0, 4],
-                [4, 0, 2, 2, 1, 4],
-                [4, 1, 2, 0, 0, 4],
-                [4, 4, 4, 4, 4, 4]
+                [4, 4, 4, 4, 4, 4, 4, 4],
+                [4, 4, 4, 0, 0, 0, 4, 4],
+                [4, 1, 5, 2, 0, 0, 4, 4],
+                [4, 4, 4, 0, 2, 1, 4, 4],
+                [4, 1, 4, 4, 2, 0, 4, 4],
+                [4, 0, 4, 0, 1, 0, 4, 4],
+                [4, 2, 0, 3, 2, 2, 1, 4],
+                [4, 0, 0, 0, 1, 0, 0, 4],
+                [4, 4, 4, 4, 4, 4, 4, 4],
             ]
         self.positionMedewerker = vindPositionMedewerker(self.speelveld)
 
@@ -125,7 +129,7 @@ def GenereerKinderen(ouder):
         ## checks of geldige coordinaten positie 3
         geldigeActie = False
 
-        # checks worden alleen uitgevoerd als de coordinaat van positie3 binnen het matrix ligt
+        # checks worden alleen uitgevoerd als de coordinaat van positie3 binnen de matrix ligt
         if coordinatenPositie3[0] < len(ouder.speelveld) and coordinatenPositie3[1] < len(ouder.speelveld[0]):
             geldigeActie = True
 
@@ -142,14 +146,14 @@ def GenereerKinderen(ouder):
 
             # check of er achter de doos een andere doos staat
             elif waardePositie2 == Element.DOOS.value & waardePositie3 == Element.DOOS.value:
-                geldigeActie = False  # aangevuld
+                geldigeActie = False
 
             # check of speler naast een doos staat dat op een doellocatie staat, terwijl hierachter een muur staat
-            elif waardePositie2 == Element.DOOS.value + Element.DOELLOCATIE.value and waardePositie3 == Element.MUUR.value:
+            elif waardePositie2 == Element.GEVULDELOCATIE.value and waardePositie3 == Element.MUUR.value:
                 geldigeActie = False
 
             # check of speler naast een doos staat dat op een doellocatie staat, terwijl hierachter een andere doos staat
-            elif waardePositie2 == Element.DOOS.value + Element.DOELLOCATIE.value and waardePositie3 == Element.DOOS.value:
+            elif waardePositie2 == Element.GEVULDELOCATIE.value and waardePositie3 == Element.DOOS.value:
                 geldigeActie = False
 
         ## genereer kinderen
