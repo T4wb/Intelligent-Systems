@@ -90,7 +90,7 @@ def vindPositionMedewerker(speelveld):
         [
             len(speelveld),
             len(speelveld[0])
-         ]  # dit is nodig, reden: toont list index out of bounds als positie niet gevonden wordt i.p.v. verder te gaan
+        ]  # dit is nodig, reden: toont list index out of bounds als positie niet gevonden wordt i.p.v. verder te gaan
 
     while not gevonden and y < len(speelveld):
         while not gevonden and x < len(speelveld[0]):
