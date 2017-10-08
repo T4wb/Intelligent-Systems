@@ -16,6 +16,9 @@ Aannames:
 	+ Speelveld is altijd een matrix.
 '''
 
+### Global variables
+oplossing = None
+
 
 ### classes
 ## initiele waardes
@@ -32,15 +35,11 @@ class Speelveld:
         self.padkosten = 0
         self.speelveld = \
             [
-                [4, 4, 4, 4, 4, 4, 4, 4],
-                [4, 4, 4, 0, 0, 0, 4, 4],
-                [4, 1, 5, 2, 0, 0, 4, 4],
-                [4, 4, 4, 0, 2, 1, 4, 4],
-                [4, 1, 4, 4, 2, 0, 4, 4],
-                [4, 0, 4, 0, 1, 0, 4, 4],
-                [4, 2, 0, 3, 2, 2, 1, 4],
-                [4, 0, 0, 0, 1, 0, 0, 4],
-                [4, 4, 4, 4, 4, 4, 4, 4]
+                [4, 4, 4, 4, 4],
+                [4, 5, 1, 0, 4],
+                [4, 0, 2, 0, 4],
+                [4, 0, 0, 0, 4],
+                [4, 4, 4, 4, 4]
             ]
         self.positionMedewerker = vindPositionMedewerker(self.speelveld)
 
@@ -51,7 +50,7 @@ class Kindknoop:
         self.ouder = ouder
         self.actie = actie
         self.padkosten = ouder.padkosten + 1
-        self.speelveld = [list(x) for x in ouder.speelveld] # dit is sneller dan copy.deepcopy(ouder.speelveld)
+        self.speelveld = [list(x) for x in ouder.speelveld]  # dit is sneller dan copy.deepcopy(ouder.speelveld)
 
         # nieuwe positie medewerker
         self.positionMedewerker = \
@@ -83,7 +82,8 @@ def vindPositionMedewerker(speelveld):
     y = 0
     x = 0
     gevonden = False
-    positionMedewerker = [len(speelveld), len(speelveld[0])]  # Is nodig: list index out of bounds als positie niet gevonden wordt
+    positionMedewerker = [len(speelveld),
+                          len(speelveld[0])]  # Is nodig: list index out of bounds als positie niet gevonden wordt
 
     while not gevonden and y < len(speelveld):
         while not gevonden and x < len(speelveld[0]):
@@ -194,7 +194,9 @@ def DepthLimited(root, zoekdiepte):
         huidigeKnoop = teDoorzoekenLijst.pop(0)
 
         if Controleerspeelveld(huidigeKnoop):
-            return True
+            global oplossing
+            oplossing = huidigeKnoop
+            return True  # return oplossing
 
         if huidigeKnoop.padkosten < zoekdiepte:
             kinderen = GenereerKinderen(huidigeKnoop)
@@ -209,14 +211,27 @@ def IterativeDeepening(root):
     i = 1
 
     while True:
-        if DepthLimited(root, i) == True:
-            return True
-        print(i)
+        if DepthLimited(root, i):
+            return oplossing  # return oplossing
         i += 1
 
-    return False  # overbodig: candidate for refactoring
+
+## tonen
+def ToonOplossing():
+    print('Er is een oplossing gevonden.')
+
+    # print alle stappen
+    print(oplossing.actie)
+
+    ouder = oplossing.ouder
+    i = oplossing.padkosten
+    while i > 1:
+        print(ouder.actie)
+        ouder = ouder.ouder
+        i -= 1
 
 
 ### execution
 root = Speelveld()
-IterativeDeepening(root)
+oplossing = IterativeDeepening(root)
+ToonOplossing()
