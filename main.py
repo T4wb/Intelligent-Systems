@@ -41,11 +41,11 @@ class Speelveld:
         self.padkosten = 0
         self.speelveld = \
             [
-                [4, 4, 4, 4, 4],
-                [4, 5, 1, 0, 4],
-                [4, 0, 2, 0, 4],
-                [4, 0, 0, 0, 4],
-                [4, 4, 4, 4, 4]
+                [4, 4, 4, 4, 4, 4],
+                [4, 5, 0, 1, 0, 4],
+                [4, 0, 2, 2, 1, 4],
+                [4, 1, 2, 0, 0, 4],
+                [4, 4, 4, 4, 4, 4]
             ]
         self.positionMedewerker = vindPositionMedewerker(self.speelveld)
 
@@ -209,9 +209,17 @@ def DepthLimited(root, zoekdiepte):
 
 
 def IterativeDeepening(root):
-    i = 1
+    # print speelveld
+    print('Speelveld:')
 
+    for rij in root.speelveld:
+        print('[%s]' % ', '.join(map(str, rij)))
+
+    print('\nAantal stappen:')
+
+    i = 1
     while True:
+        print(i)
         if DepthLimited(root, i):
             return oplossing
         i += 1
@@ -231,7 +239,7 @@ def ToonOplossing():
         ouder = ouder.ouder
         i -= 1
 
-    print('Er is een oplossing gevonden:')
+    print('\nEr is een oplossing gevonden:')
     for stap in stappen:
         print(stap, end=' ')
 
