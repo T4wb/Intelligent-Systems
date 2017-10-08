@@ -56,7 +56,7 @@ class Kindknoop:
         self.ouder = ouder
         self.actie = actie
         self.padkosten = ouder.padkosten + 1
-        self.speelveld = [list(x) for x in ouder.speelveld]  # dit is sneller dan copy.deepcopy(ouder.speelveld)
+        self.speelveld = [list(x) for x in ouder.speelveld]
 
         # nieuwe positie medewerker
         self.positionMedewerker = \
