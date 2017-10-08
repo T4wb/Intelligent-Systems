@@ -86,8 +86,11 @@ def vindPositionMedewerker(speelveld):
     y = 0
     x = 0
     gevonden = False
-    positionMedewerker = [len(speelveld),
-                          len(speelveld[0])]  # Is nodig: list index out of bounds als positie niet gevonden wordt
+    positionMedewerker = \
+        [
+            len(speelveld),
+            len(speelveld[0])
+         ]  # dit is nodig, reden: toont list index out of bounds als positie niet gevonden wordt i.p.v. verder te gaan
 
     while not gevonden and y < len(speelveld):
         while not gevonden and x < len(speelveld[0]):
@@ -155,7 +158,7 @@ def GenereerKinderen(ouder):
             kind = Kindknoop(ouder, actie, coordinatenPositie2, coordinatenPositie3, waardePositie2, waardePositie3)
 
             if ouder.padkosten != 0:
-                # controleer of het speelveld van de voorouder van het kind gelijk is aan zijn speelveld
+                # controleer of het speelveld van de voorouder van het kind gelijk is aan speelveld van kind
                 i = 0
                 inverseActie = True
                 while inverseActie and i < len(ouder.speelveld):
@@ -193,7 +196,8 @@ def DepthLimited(root, zoekdiepte):
         if Controleerspeelveld(huidigeKnoop):
             global oplossing
             oplossing = huidigeKnoop
-            return True  # return oplossing
+
+            return True
 
         if huidigeKnoop.padkosten < zoekdiepte:
             kinderen = GenereerKinderen(huidigeKnoop)
@@ -209,13 +213,13 @@ def IterativeDeepening(root):
 
     while True:
         if DepthLimited(root, i):
-            return oplossing  # return oplossing
+            return oplossing
         i += 1
 
 
 ## tonen
 def ToonOplossing():
-    # print alle stappen van de oplossing
+    # print alle stappen om tot de oplossing te komen
     stappen = []
     stappen.insert(0, str.lower(oplossing.actie.name))
 
