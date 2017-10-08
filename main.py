@@ -16,18 +16,25 @@ Aannames:
 	+ Speelveld is altijd een matrix.
 '''
 
-### Global variables
+### Globale variablen
 oplossing = None
 
 
-### classes
-## initiele waardes
+### klassen
+## initiële waardes
 class Element(Enum):
     DOELLOCATIE = 1
     DOOS = 2
     GEVULDELOCATIE = 3
     MUUR = 4
     MEDEWERKER = 5
+
+
+class Actie(Enum):
+    RECHTS = [0, 1]
+    LINKS = [0, -1]
+    ONDER = [1, 0]
+    BOVEN = [-1, 0]
 
 
 class Speelveld:
@@ -55,20 +62,18 @@ class Kindknoop:
         # nieuwe positie medewerker
         self.positionMedewerker = \
             [
-                ouder.positionMedewerker[0] + actie[0],
-                ouder.positionMedewerker[1] + actie[1]
+                ouder.positionMedewerker[0] + actie.value[0],
+                ouder.positionMedewerker[1] + actie.value[1]
             ]
 
         ## berekenen van de verplaatsing
         # positie1 = de start positie van de medewerker aan het begin van een kindknoop
 
         # tel waarde positie2 op bij positie3 enkel als positie2 een doos of een gevulde locatie is
-        if waardePositie2 == Element.DOOS.value or waardePositie2 == Element.GEVULDELOCATIE.value:  # fix: aangepast: verplaats doos op doellocatie ook
-            self.speelveld[coordinatenPositie3[0]][
-                coordinatenPositie3[1]] += Element.DOOS.value  # fix: aangepast: verplaats doos i.p.v. waardePositie2
+        if waardePositie2 == Element.DOOS.value or waardePositie2 == Element.GEVULDELOCATIE.value:
+            self.speelveld[coordinatenPositie3[0]][coordinatenPositie3[1]] += Element.DOOS.value
             # trek waarde positie2 af van positie2
-            self.speelveld[self.positionMedewerker[0]][self.positionMedewerker[
-                1]] -= Element.DOOS.value  # fix: aangepast: verplaats doos i.p.v. waardePositie2
+            self.speelveld[self.positionMedewerker[0]][self.positionMedewerker[1]] -= Element.DOOS.value
 
         # medewerker verplaatsen naar positie 2
         self.speelveld[self.positionMedewerker[0]][self.positionMedewerker[1]] += Element.MEDEWERKER.value
@@ -77,7 +82,7 @@ class Kindknoop:
         self.speelveld[ouder.positionMedewerker[0]][ouder.positionMedewerker[1]] -= Element.MEDEWERKER.value
 
 
-### functions
+### functies
 def vindPositionMedewerker(speelveld):
     y = 0
     x = 0
@@ -99,28 +104,21 @@ def vindPositionMedewerker(speelveld):
 
 def GenereerKinderen(ouder):
     kinderen = []
-    acties = \
-        [
-            [0, 1],  # Rechts
-            [0, -1],  # Links
-            [1, 0],  # Boven
-            [-1, 0]  # Onder
-        ]
 
     #### rules
-    for actie in acties:
+    for actie in Actie:
         ### generate speelveld
         ## initiele waardes
         coordinatenPositie2 = \
             [
-                ouder.positionMedewerker[0] + actie[0],
-                ouder.positionMedewerker[1] + actie[1]
+                ouder.positionMedewerker[0] + actie.value[0],
+                ouder.positionMedewerker[1] + actie.value[1]
             ]
 
         coordinatenPositie3 = \
             [
-                coordinatenPositie2[0] + actie[0],
-                coordinatenPositie2[1] + actie[1]
+                coordinatenPositie2[0] + actie.value[0],
+                coordinatenPositie2[1] + actie.value[1]
             ]
 
         ## checks of geldige coordinaten positie 3
@@ -218,29 +216,14 @@ def IterativeDeepening(root):
 
 ## tonen
 def ToonOplossing():
-    # print alle stappen # todo: refactor naar enum-naam
+    # print alle stappen van de oplossing
     stappen = []
-
-    if oplossing.actie == [0, 1]:
-        stappen.insert(0, "rechts")
-    elif oplossing.actie == [0, -1]:
-        stappen.insert(0, "links")
-    elif oplossing.actie == [1, 0]:
-        stappen.insert(0, "onder")
-    elif oplossing.actie == [-1, 0]:
-        stappen.insert(0, "boven")
+    stappen.insert(0, str.lower(oplossing.actie.name))
 
     ouder = oplossing.ouder
     i = oplossing.padkosten
     while i > 1:
-        if ouder.actie == [0, 1]:
-            stappen.insert(0, "rechts")
-        elif ouder.actie == [0, -1]:
-            stappen.insert(0, "links")
-        elif ouder.actie == [1, 0]:
-            stappen.insert(0, "onder")
-        elif ouder.actie == [-1, 0]:
-            stappen.insert(0, "boven")
+        stappen.insert(0, str.lower(ouder.actie.name))
 
         ouder = ouder.ouder
         i -= 1
@@ -248,10 +231,9 @@ def ToonOplossing():
     print('Er is een oplossing gevonden:')
     for stap in stappen:
         print(stap, end=' ')
-    x=1
 
 
-### execution
+### uitvoeren
 root = Speelveld()
 oplossing = IterativeDeepening(root)
 ToonOplossing()
