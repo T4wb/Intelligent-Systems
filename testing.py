@@ -28,3 +28,9 @@ while i < len(a.speelveld):
         print('exception')
         break
     i += 1
+
+
+stappen = ['onder', 'boven', 'links', 'rechts']
+
+for stap in stappen:
+    print(stap, end=' ')

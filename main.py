@@ -218,17 +218,37 @@ def IterativeDeepening(root):
 
 ## tonen
 def ToonOplossing():
-    print('Er is een oplossing gevonden.')
+    # print alle stappen # todo: refactor naar enum-naam
+    stappen = []
 
-    # print alle stappen
-    print(oplossing.actie)
+    if oplossing.actie == [0, 1]:
+        stappen.insert(0, "rechts")
+    elif oplossing.actie == [0, -1]:
+        stappen.insert(0, "links")
+    elif oplossing.actie == [1, 0]:
+        stappen.insert(0, "onder")
+    elif oplossing.actie == [-1, 0]:
+        stappen.insert(0, "boven")
 
     ouder = oplossing.ouder
     i = oplossing.padkosten
     while i > 1:
-        print(ouder.actie)
+        if ouder.actie == [0, 1]:
+            stappen.insert(0, "rechts")
+        elif ouder.actie == [0, -1]:
+            stappen.insert(0, "links")
+        elif ouder.actie == [1, 0]:
+            stappen.insert(0, "onder")
+        elif ouder.actie == [-1, 0]:
+            stappen.insert(0, "boven")
+
         ouder = ouder.ouder
         i -= 1
+
+    print('Er is een oplossing gevonden:')
+    for stap in stappen:
+        print(stap, end=' ')
+    x=1
 
 
 ### execution
