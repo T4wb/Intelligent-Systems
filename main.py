@@ -1,6 +1,5 @@
 ################################# Remco Cloudt (1551868) & Tawwab Djalielie (1548166) ##################################
 
-import copy
 from enum import Enum
 
 '''
