@@ -1,5 +1,7 @@
+import os
+
 # to do: smoothing
-#evt to do: outputs wegschrijven zodat wanneer programma herstart wordt de oude resultaten behouden blijven.
+# evt to do: outputs wegschrijven zodat wanneer programma herstart wordt de oude resultaten behouden blijven.
 
 # Talen:
 # Engels
@@ -9,114 +11,86 @@
 # Russisch
 # Hongaars
 
-
-# voor elke taal een dict
-
-# tekst analyseren:
-tekst= "hello world"
-
-def tekstTraining(x, taal, ngram):
-    if x < 1:
-        return dictEngels
-    else:
-        dictTaal, = TekstTraining(x-1, tekst, taal, ngram)
-
-
-        return dictEngels
-
-    dictEngels={}
-    dictDuits={}
-    dictFrans={}
-    dictNederlands={}
-    dictRussisch={}
-    dictHongaars = {}
-
-    dictionaryCases = \
-        {
-            'Engels': dictEngels,
-            'Nederlands' : dictNederlands,
-            'Frans' : dictFrans,
-            'Duits' : dictDuits,
-            'Russisch' : dictRussisch,
-            'Hongaars' : dictHongaars
-        }
-
-    dict = dictionaryCases[taal]
-
-    # ......
-    i=0
-    j=ngram
-    while j <= len(tekst):
-        str=tekst[i:j]
-        if str in dict:
-            dict[str] += 1
-        else:
-            dict[str] = 1
-        i += 1
-        j += 1
-    print(dict)
-
-    # return
-    return dictNederlands
+# init
+TEKSTENPATH = os.path.abspath("") + '\\Teksten\\'# todo: maak een apart project & TEKSTENPATH aanpassen!
 
 dictTalen = \
     {
-        'Engels' :
+        'Engels':
             {
-                'Bi' : {},
-                'Tri' : {}
+                'Bi': {},
+                'Tri': {}
             },
-        'Nederlands' :
+        'Nederlands':
             {
-                'Bi' : {},
-                'Tri' : {}
+                'Bi': {},
+                'Tri': {}
             },
-        'Frans' :
+        'Frans':
             {
-                'Bi' : {},
-                'Tri' : {}
+                'Bi': {},
+                'Tri': {}
             },
-        'Duits' :
+        'Duits':
             {
-                'Bi' : {},
-                'Tri' : {}
+                'Bi': {},
+                'Tri': {}
             },
-        'Russisch' :
+        'Russisch':
             {
-                'Bi' : {},
-                'Tri' : {}
+                'Bi': {},
+                'Tri': {}
             },
-        'Hongaars' :
+        'Hongaars':
             {
-                'Bi' : {},
-                'Tri' : {}
+                'Bi': {},
+                'Tri': {}
             }
 
     }
 
-dictNederlandsTri = tekstTraining("hello world hel","Nederlands",3)
-dictNederlandsBi = tekstTraining("hello world hel","Nederlands",3)
 
-# aantal teksten in getallen = 2
-dictEngels, = tekstTraining(x, taal, ngram)
+def turf(tekstnummer, ngram, dictTurving, taal):
+    # todo: pen bijbehorende tekst
+    tekstpath = TEKSTENPATH + taal + '\\tekst' + str(tekstnummer) +'.txt'
+    parser = open(tekstpath, 'r')
+    tekst = parser.read()
+    parser.close()
+
+    x=1
+    # turving
+    i = 0
+    j = ngram
+
+    while j <= len(tekst):
+        string = tekst[i:j]
+        if string in dictTurving:
+            dictTurving[string] += 1
+        else:
+            dictTurving[string] = 1
+        i += 1
+        j += 1
+    x=1
 
 
+def tekstTraining(tekstnummer, turfDict, taal):
+    if tekstnummer < 1:
+        return turfDict
+    else:
+        dictTaal = tekstTraining(tekstnummer-1, turfDict, taal)
 
+        ## turf dictTri
+        turf(tekstnummer, 3, dictTaal[taal]['Tri'], taal)
 
-i=0
-while i < aantalTeksten:
-    dictNederlands =
-    i += 1
+        ## turf dictBi
+        turf(tekstnummer, 2, dictTaal[taal]['Bi'], taal)
 
-    #bigrams
+        return dictTaal
 
-    #berekenen kansen
+        # berekenen kansen
 
-#scannen string
-
-#
-
-
-
+tekstTraining(2, dictTalen, 'Engels')
+x=1
+# todo: herkenning inputstring
 
 
