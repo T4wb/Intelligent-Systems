@@ -59,19 +59,19 @@ def turf(tekstnummer, ngram, dictTurving, taal):
     parser.close()
     woorden = re.findall(r'(?u)\w+', tekst)
 
-    x=1
     # turving
     i = 0
     j = ngram
 
-    while j <= len(tekst):
-        string = tekst[i:j]
-        if string in dictTurving:
-            dictTurving[string] += 1
-        else:
-            dictTurving[string] = 1
-        i += 1
-        j += 1
+    for woord in woorden:
+        while j <= len(woord):
+            string = woord[i:j]
+            if string in dictTurving:
+                dictTurving[string] += 1
+            else:
+                dictTurving[string] = 1
+            i += 1
+            j += 1
     x=1
 
 
