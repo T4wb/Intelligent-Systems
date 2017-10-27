@@ -1,4 +1,5 @@
 import os
+import re
 
 # to do: smoothing
 # evt to do: outputs wegschrijven zodat wanneer programma herstart wordt de oude resultaten behouden blijven.
@@ -56,6 +57,7 @@ def turf(tekstnummer, ngram, dictTurving, taal):
     parser = open(tekstpath, 'r')
     tekst = parser.read()
     parser.close()
+    woorden = re.findall(r'(?u)\w+', tekst)
 
     x=1
     # turving
