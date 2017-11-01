@@ -1,9 +1,7 @@
 ################################# Remco Cloudt (1551868) & Tawwab Djalielie (1548166) ##################################
 import os
-import re
 
-# todo: smoothing!
-# todo: evt outputs wegschrijven zodat wanneer programma herstart wordt de oude resultaten behouden blijven.
+# todo: refactoring: turftekst & trainTaalherkenning; de recursie is niet nodig. Het zorgt voor verwarring en is niet efficiënt, gezien de dict-variable steeds herschreven wordt. Maak gebruik van een loop!
 
 ### Globale variabelen
 USERINPUTPATH = os.path.abspath("") + '\\Input\\'
@@ -14,8 +12,8 @@ AANTALTEKSTEN = \
         'Nederlands': 0,
         'Frans': 0,
         'Duits': 0,
-        'Russisch': 0,
-        'Hongaars': 0
+        'Portugees': 0,
+        'Spaans': 0
     }
 
 DICTALEN = \
@@ -48,21 +46,20 @@ DICTALEN = \
                 'BiKans': {},
                 'TriKans': {}
             },
-        'Russisch':
+        'Portugees':
             {
                 'Bi': {},
                 'Tri': {},
                 'BiKans': {},
                 'TriKans': {}
             },
-        'Hongaars':
+        'Spaans':
             {
                 'Bi': {},
                 'Tri': {},
                 'BiKans': {},
                 'TriKans': {}
             }
-
     }
 
 
@@ -71,24 +68,22 @@ DICTALEN = \
 def turfTekst(tekstnummer, ngram, dictTurving, taal):
     # todo: try-catch
     tekstpath = TEKSTENPATH + taal + '\\tekst' + str(tekstnummer) + '.txt'
-    parser = open(tekstpath, 'r')
+    parser = open(tekstpath, 'r', encoding='utf-8')
     tekst = parser.read()
     parser.close()
-    woorden = re.findall(r'(?u)\w+', tekst)
 
     # turving
-    for woord in woorden:
-        i = 0
-        j = ngram
+    i = 0
+    j = ngram
 
-        while j <= len(woord):
-            string = woord[i:j]
-            if string in dictTurving:
-                dictTurving[string] += 1
-            else:
-                dictTurving[string] = 1
-            i += 1
-            j += 1
+    while j <= len(tekst):
+        string = tekst[i:j]
+        if string in dictTurving:
+            dictTurving[string] += 1
+        else:
+            dictTurving[string] = 1
+        i += 1
+        j += 1
 
 
 def trainTaalherkenning(tekstnummer, turfDict, taal):
@@ -126,6 +121,7 @@ def berekenKansen(kansDict, taal):
 
     return kansDict
 
+
 def initTaalHerkenning():
     global DICTALEN
 
@@ -138,70 +134,81 @@ def initTaalHerkenning():
     for taal in DICTALEN:
         DICTALEN = trainTaalherkenning(AANTALTEKSTEN[taal], DICTALEN, taal)
 
-    # kansenberekening Bi- & Tri-grammen
-    for taal in DICTALEN:
-        DICTALEN = berekenKansen(DICTALEN, taal)
 
-def verkrijgNgram(woorden, ngram):
+def verkrijgNgram(tekst, ngram):
     gram = []
-    for woord in woorden:
-        # bepaal trigrammen en tussenliggende bigrammen
-        i = 0
-        j = ngram
 
-        while j < len(woord):
-            gram.append(woord[i:j])
-            i += 1
-            j += 1
+    i = 0
+    j = ngram
 
-    # gooi eerste en laatste bigram weg
+    while j <= len(tekst):
+        gram.append(tekst[i:j])
+        i += 1
+        j += 1
+
+    # slice eerste en laatste bigram weg voor de tussenliggende bigrammen
     if ngram == 2 and len(gram) > 2:
         gram = gram[1:len(gram) - 1]
 
-    # dictWoorden { 'woord1': {'bigrammen' : {'he': dictTalen[taal]['biKans']['he']}, 'trigrammen': {'het': 0} }
-    #todo: twee dicts van maken een voor bi een voor tri
     return gram
 
-### uitvoer
+
+def smoothing(grammen, ngram):
+    for gram in grammen:
+        for each in DICTALEN:
+            if gram not in DICTALEN[each][ngram]:
+                DICTALEN[each][ngram][gram] = 1
+
+
+def berekenKansInputTekst(listNgram, ngram, taal):
+    kans = 1
+
+    for gram in listNgram:
+        kans *= DICTALEN[taal][ngram + 'Kans'][gram]
+
+    return kans
+
+
+### programmauitvoer
+print('Een ogenblik geduld...')
+
 ## init taalherkenning
 initTaalHerkenning()
 
 ## taalherkenning gebruikersinvoer
-kansenTekst = {
-    'Engels': 0,
-    'Nederlands': 0,
-    'Frans': 0,
-    'Duits': 0,
-    'Russisch': 0,
-    'Hongaars': 0
+kansenTekst = \
+    {
+        'Engels': 0,
+        'Nederlands': 0,
+        'Frans': 0,
+        'Duits': 0,
+        'Portugees': 0,
+        'Spaans': 0
     }
 
-inputTekst =  input("Geef uw tekstinvoer: ")
-woorden = re.findall(r'(?u)\w+', inputTekst)
+inputTekst = input("Geef uw tekstinvoer: ")
 
 # kans berekenen voor inputTekst gegeven de taal
-kansWoorden = 0
+trigrammen = verkrijgNgram(inputTekst, 3)
+tussenliggendeBigrammen = verkrijgNgram(inputTekst, 2)
 
-# woorden = ['Hoi', 'dit', 'is', 'Charlie']
-'ho' 'oi' 'di' 'it'
+# smoothing
+smoothing(trigrammen, 'Tri')
+smoothing(tussenliggendeBigrammen, 'Bi')
 
-bigrammen = verkrijgNgram(woorden, 2)
-trigrammen = verkrijgNgram(woorden, 3)
+# bereken kansen van de Bi en Tri grammen
+for taal in DICTALEN:
+    DICTALEN = berekenKansen(DICTALEN, taal)
 
-# bereken kansen bigrammen & trigrammen
-# todo:
+# bereken kans van de inputstring bij een bepaalde taal
+for taal in kansenTekst:
+    kansTrigrammen = berekenKansInputTekst(trigrammen, 'Tri', taal)
+    kansTussenliggendeBigrammen = berekenKansInputTekst(tussenliggendeBigrammen, 'Bi', taal)
 
-# todo: bereken kans van het woord
-   # return kans van het woord
+    kansenTekst[taal] = kansTrigrammen / kansTussenliggendeBigrammen
 
-#     for taal in DICTALEN:
-#         taal['Bikans'][woord]
-# zoek naar kansen en vermenigvuldig met
-# bereken kans bij elke taal
-# schrijf naar dict kansenTekst
-# neem hoogste waarde als waarheid aan
+# neem hoogste kans
+herkendeTaal = max(kansenTekst.keys(), key=(lambda k: kansenTekst[k]))
 
-    # todo: output: print(inputTekst + ': ' + herkendeTaal + \n) =-leidt-tot-> print output: 'tekst1.txt': Engels, 'tekst2.txt': Frans, 'tekst3.txt': Nederlands
-    # todo: welke taal?: tekst = kansen van woorden vermenigvuldigen -> pas smoothing toe!
-
-x = 1 #todo: weghalen; dit is debug-code
+## output
+print('De taal dat herkend wordt is: ' + herkendeTaal)
