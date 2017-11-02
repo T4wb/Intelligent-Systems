@@ -2,6 +2,7 @@
 import os
 
 # todo: refactoring: turftekst & trainTaalherkenning; de recursie is niet nodig. Het zorgt voor verwarring en is niet efficiënt, gezien de dict-variable steeds herschreven wordt. Maak gebruik van een loop!
+# todo: het aantal woorden in een tekst gelijk maken
 
 ### Globale variabelen
 USERINPUTPATH = os.path.abspath("") + '\\Input\\'
