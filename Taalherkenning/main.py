@@ -130,9 +130,9 @@ def verkrijgNgram(tekst, ngram):
 
 def smoothing(grammen, ngram):
     for gram in grammen:
-        for each in DICTALEN:
-            if gram not in DICTALEN[each][ngram]:
-                DICTALEN[each][ngram][gram] = 1
+        for taal in DICTALEN:
+            if gram not in DICTALEN[taal][ngram]:
+                DICTALEN[taal][ngram][gram] = 1
 
 
 def berekenKansInputTekst(listNgram, ngram, taal):
