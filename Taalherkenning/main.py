@@ -1,21 +1,9 @@
 ################################# Remco Cloudt (1551868) & Tawwab Djalielie (1548166) ##################################
 import os
 
-# todo: refactoring: turftekst & trainTaalherkenning; de recursie is niet nodig. Het zorgt voor verwarring en is niet efficiënt, gezien de dict-variable steeds herschreven wordt. Maak gebruik van een loop!
-# todo: het aantal woorden in een tekst gelijk maken
-
 ### Globale variabelen
 USERINPUTPATH = os.path.abspath("") + '\\Input\\'
 TEKSTENPATH = os.path.abspath("") + '\\Teksten\\'
-AANTALTEKSTEN = \
-    {
-        'Engels': 0,
-        'Nederlands': 0,
-        'Frans': 0,
-        'Duits': 0,
-        'Portugees': 0,
-        'Spaans': 0
-    }
 
 DICTALEN = \
     {
@@ -66,9 +54,8 @@ DICTALEN = \
 
 ### functies
 ## training
-def turfTekst(tekstnummer, ngram, dictTurving, taal):
-    # todo: try-catch
-    tekstpath = TEKSTENPATH + taal + '\\tekst' + str(tekstnummer) + '.txt'
+def turfTekst(dictTurving, ngram, taal):
+    tekstpath = TEKSTENPATH + taal + '.txt'
     parser = open(tekstpath, 'r', encoding='utf-8')
     tekst = parser.read()
     parser.close()
@@ -87,17 +74,18 @@ def turfTekst(tekstnummer, ngram, dictTurving, taal):
         j += 1
 
 
-def trainTaalherkenning(tekstnummer, turfDict, taal):
-    if tekstnummer < 1:
-        return turfDict
-    else:
-        dictTaal = trainTaalherkenning(tekstnummer - 1, turfDict, taal)
+def trainTaalherkenning(turfDict, taal):
+    # turf bigrammen
+    turfTekst(turfDict['Bi'], 2, taal)
 
-        # turf dictTri
-        turfTekst(tekstnummer, 3, dictTaal[taal]['Tri'], taal)
+    # turf trigrammen
+    turfTekst(turfDict['Tri'], 3, taal)
 
-        # turf dictBi
-        turfTekst(tekstnummer, 2, dictTaal[taal]['Bi'], taal)
+
+def initTaalHerkenning():
+    # train taalherkenning: turving
+    for taal in DICTALEN:
+        trainTaalherkenning(DICTALEN[taal], taal)
 
 
 def berekenKansen(kansDict, taal):
@@ -121,19 +109,7 @@ def berekenKansen(kansDict, taal):
     return kansDict
 
 
-def initTaalHerkenning():
-    global DICTALEN
-
-    # scan de taal-directory voor het aantal bestanden bij de behorende taal
-    for taal in AANTALTEKSTEN:
-        AANTALTEKSTEN[taal] = \
-            len([filename for filename in os.listdir(TEKSTENPATH + taal) if filename.startswith("tekst")])
-
-    # train taalherkenning: turving
-    for taal in DICTALEN:
-        trainTaalherkenning(AANTALTEKSTEN[taal], DICTALEN, taal)
-
-
+## inputverwerking
 def verkrijgNgram(tekst, ngram):
     gram = []
 
@@ -199,14 +175,14 @@ smoothing(tussenliggendeBigrammen, 'Bi')
 for taal in DICTALEN:
     DICTALEN = berekenKansen(DICTALEN, taal)
 
-# bereken kans van de inputstring bij een bepaalde taal
+# bereken kans van de inputtekst bij een bepaalde taal
 for taal in kansenTekst:
     kansTrigrammen = berekenKansInputTekst(trigrammen, 'Tri', taal)
     kansTussenliggendeBigrammen = berekenKansInputTekst(tussenliggendeBigrammen, 'Bi', taal)
 
     kansenTekst[taal] = kansTrigrammen / kansTussenliggendeBigrammen
 
-# neem hoogste kans
+# verkrijgt key met de hoogste kans-value
 herkendeTaal = max(kansenTekst.keys(), key=(lambda k: kansenTekst[k]))
 
 ## output
