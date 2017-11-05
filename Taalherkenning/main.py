@@ -99,8 +99,6 @@ def trainTaalherkenning(tekstnummer, turfDict, taal):
         # turf dictBi
         turfTekst(tekstnummer, 2, dictTaal[taal]['Bi'], taal)
 
-        return dictTaal
-
 
 def berekenKansen(kansDict, taal):
     # tel respectievelijk Bi & Tri totaal
@@ -133,7 +131,7 @@ def initTaalHerkenning():
 
     # train taalherkenning: turving
     for taal in DICTALEN:
-        DICTALEN = trainTaalherkenning(AANTALTEKSTEN[taal], DICTALEN, taal)
+        trainTaalherkenning(AANTALTEKSTEN[taal], DICTALEN, taal)
 
 
 def verkrijgNgram(tekst, ngram):
