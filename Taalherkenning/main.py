@@ -1,5 +1,6 @@
 ################################# Remco Cloudt (1551868) & Tawwab Djalielie (1548166) ##################################
 import os
+import math
 
 ### Globale variabelen
 USERINPUTPATH = os.path.abspath("") + '\\Input\\'
@@ -139,7 +140,7 @@ def berekenKansInputTekst(listNgram, ngram, taal):
     kans = 1
 
     for gram in listNgram:
-        kans *= DICTALEN[taal][ngram + 'Kans'][gram]
+        kans *= math.log10(DICTALEN[taal][ngram + 'Kans'][gram])
 
     return kans
 
