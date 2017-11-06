@@ -187,4 +187,6 @@ for taal in kansenTekst:
 herkendeTaal = max(kansenTekst.keys(), key=(lambda k: kansenTekst[k]))
 
 ## output
-print('De taal die herkend wordt is: ' + herkendeTaal)
+print('----------------------------------------------------------------')
+print('De taal die herkend wordt is ' + herkendeTaal + '.')
+close=input("\n\nDruk op ENTER om af te sluiten: ")
